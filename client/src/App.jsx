@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { io } from "socket.io-client";
+import dotenv from 'dotenv'
+dotenv.config()
 
-const socket = io("http://localhost:5000", {
+const socket = io(process.env.VITE_BACKEND_URL, {
   autoConnect: false
 });
 
