@@ -2,6 +2,8 @@ const express = require("express");
 const http = require("http");
 const cors = require("cors");
 const { Server } = require("socket.io");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const app = express();
 app.use(cors());
@@ -13,9 +15,9 @@ app.get("/", (_req, res) => {
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"]
-  }
+    origin: "https://ws-connect.vercel.app/",
+    methods: ["GET", "POST"],
+  },
 });
 
 const users = new Map();
@@ -34,7 +36,7 @@ io.on("connection", (socket) => {
       id: Date.now(),
       username,
       text: payload?.text || "",
-      time: new Date().toLocaleTimeString()
+      time: new Date().toLocaleTimeString(),
     });
   });
 
@@ -42,7 +44,7 @@ io.on("connection", (socket) => {
     const username = users.get(socket.id) || "Someone";
     socket.broadcast.emit("user_typing", {
       username,
-      isTyping: Boolean(isTyping)
+      isTyping: Boolean(isTyping),
     });
   });
 
@@ -56,7 +58,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
+  console.log(`Server listening on ${PORT}!`);
 });
